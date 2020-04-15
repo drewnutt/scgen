@@ -290,7 +290,7 @@ class VAEArithKeras:
         interpolation = self.reconstruct(vectors)
         return interpolation
 
-    def predict(self, adata, conditions, cell_type_key, condition_key, adata_to_predict=None, celltype_to_predict=None, obs_key="all", condit="condition"):
+    def predict(self, adata, conditions, cell_type_key, condition_key, adata_to_predict=None, celltype_to_predict=None, obs_key="all"):
         """
             Predicts the cell type provided by the user in stimulated condition.
             Parameters
@@ -319,16 +319,16 @@ class VAEArithKeras:
                                                   cell_type_key="cell_type",condition_key="condition",adata_to_predict=unperturbed_cd4t)
         """
         if obs_key == "all":
-            ctrl_x = adata[adata.obs[condit] == conditions["ctrl"], :]
-            stim_x = adata[adata.obs[condit] == conditions["stim"], :]
+            ctrl_x = adata[adata.obs[condition_key] == conditions["ctrl"], :]
+            stim_x = adata[adata.obs[condition_key] == conditions["stim"], :]
             ctrl_x = balancer(ctrl_x, cell_type_key=cell_type_key, condition_key=condition_key)
             stim_x = balancer(stim_x, cell_type_key=cell_type_key, condition_key=condition_key)
         else:
             key = list(obs_key.keys())[0]
             values = obs_key[key]
             subset = adata[adata.obs[key].isin(values)]
-            ctrl_x = subset[subset.obs[condit] == conditions["ctrl"], :]
-            stim_x = subset[subset.obs[condit] == conditions["stim"], :]
+            ctrl_x = subset[subset.obs[condition_key] == conditions["ctrl"], :]
+            stim_x = subset[subset.obs[condition_key] == conditions["stim"], :]
             if len(values) > 1:
                 ctrl_x = balancer(ctrl_x, cell_type_key=cell_type_key, condition_key=condition_key)
                 stim_x = balancer(stim_x, cell_type_key=cell_type_key, condition_key=condition_key)
